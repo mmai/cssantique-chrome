@@ -1,0 +1,21 @@
+{
+  "name": "CSSAntique",
+  "description": "Emulate older browsers by disabling some CSS rules support",
+  "homepage_url": "http://bourcereau.fr",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "permissions": [ "activeTab" ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "default_locale": "en",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_title": "Restrain CSS"
+  }
+}
