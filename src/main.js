@@ -1,4 +1,4 @@
-import { filterStyles, browsersDb } from 'cssantique'
+import { filterStyles, resetStyles, browsersDb } from 'cssantique'
 
 const browserNameOptions = Object.keys(browsersDb).map((name) => `<option>${name}</option>`)
 
@@ -31,6 +31,7 @@ browserElem.addEventListener('change', updateVersions)
 cssantiqueForm.addEventListener('submit',
   function (e) {
     e.preventDefault()
+    resetStyles()
     filterStyles({browser: {name: browserElem.value, version: versionElem.value}})
   },
   false
