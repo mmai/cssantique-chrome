@@ -1,45 +1,59 @@
-import { filterStyles, resetStyles, browsersDb } from 'cssantique'
+import { browsersDb } from 'cssantique'
 
-const browserNameOptions = Object.keys(browsersDb).map((name) => `<option>${name}</option>`)
+document.getElementById('browserNameOptions').innerHTML = Object.keys(browsersDb).reduce((html, name) => {
+  var image = chrome.extension.getURL(`images/${name}.png`)
+  return html + `<input class='browserRadio' type="radio" name="browserName" value="${name}" id='browserRadio-${name}' /><label for='browserRadio-${name}' class='browserNameLabel'><img class="browserLogo" src="${image}"> ${name} </label><br>`
+}, '')
 
-let cssantiqueForm = document.createElement('form')
-cssantiqueForm.id = 'cssantiqueForm'
-cssantiqueForm.innerHTML = `
-  <label for='browserName'>Browser</label>
-  <select name='browserName' id='browserName'>
-  ${browserNameOptions}
-  </select><br />
-  <label for='browserVersion'>version</label>
-  <select name='browserVersion' id='browserVersion'>
-  </select><br />
-  <input type='submit' />
-  `
-window.document.body.appendChild(cssantiqueForm)
-
+const cssantiqueForm = document.getElementById('cssantiqueForm')
 const browserElem = document.getElementById('browserName')
 const versionElem = document.getElementById('browserVersion')
+const discardedElem = document.getElementById('cssDiscarded')
 
-updateVersions()
-browserElem.addEventListener('change', updateVersions)
+var bnameElemLabels = document.querySelectorAll('.browserNameLabel')
+var bnameElems = document.querySelectorAll('.browserRadio')
+Array.prototype.forEach.call(bnameElems, (radio) => {
+  radio.addEventListener('change', updateVersions)
+})
 
-cssantiqueForm.addEventListener('submit',
-  function (e) {
-    e.preventDefault()
+cssantiqueForm.addEventListener('submit', function (e) {
+  e.preventDefault()
+
+  chrome.devtools.inspectedWindow.eval(`
     resetStyles()
     filterStyles({
-      ignore: ['cssantique.css'],
-      browser: {name: browserElem.value, version: versionElem.value}
+      browser: {name: "${browserElem.value}", version: "${versionElem.value}"}
     })
-  },
+      `,
+    {useContentScriptContext: true},
+    function (result, isException) {
+      if (isException) {
+        showError(isException.value)
+      } else {
+        showDiscarded(result.discarded)
+      }
+    })
+},
   false
 )
 
 function updateVersions () {
   versionElem.innerHTML = ''
-  const browserVersions = browsersDb[browserElem.value]
+  var browser = document.querySelector('input[name="browserName"]:checked').value
+  browserName.value = browser
+  const browserVersions = browsersDb[browser]
   Object.keys(browserVersions).map((version) => {
     let opt = document.createElement('option')
     opt.text = version
+    opt.value = version
     versionElem.appendChild(opt)
   })
+}
+
+function showDiscarded (discarded) {
+  discardedElem.innerHTML = discarded.join('<br/>')
+}
+
+function showError (error) {
+  discardedElem.innerHTML = error
 }

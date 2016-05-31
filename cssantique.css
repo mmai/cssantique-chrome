@@ -1,7 +1,28 @@
+#cssantiqueContent {
+  display: flex; 
+  flex-direction: row;
+}
+
 #cssantiqueForm {
-  position: absolute;
-  top: 2em; right: 2em;
-  height: 5em; width: 15em;
-  background-color: lightgray;
-  padding:0.5em;
+}
+
+.browserLogo {
+  width: 24px;
+  height: 24px;
+}
+
+.browserRadio {
+  display: none;
+}
+
+.browserRadio:checked + label {
+  height: 25px;
+  background-color:lightgrey;
+}
+
+#browserVersion {
+}
+
+#cssDiscarded {
+
 }

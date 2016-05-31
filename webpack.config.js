@@ -4,6 +4,8 @@ var webpack = require('webpack')
 module.exports = {
   entry: {
     main: './src/main',
+    content: './src/content',
+    devtools: './src/devtools',
   },
   output: {
     path: path.resolve(__dirname, 'js/'),
