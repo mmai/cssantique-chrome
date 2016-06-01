@@ -1,5 +1,3 @@
-import { browsersDb } from 'cssantique'
-
 document.getElementById('browserNameOptions').innerHTML = Object.keys(browsersDb).reduce((html, name) => {
   var image = chrome.extension.getURL(`images/${name}.png`)
   return html + `<input class='browserRadio' type="radio" name="browserName" value="${name}" id='browserRadio-${name}' /><label for='browserRadio-${name}' class='browserNameLabel'><img class="browserLogo" src="${image}"> ${name} </label><br>`

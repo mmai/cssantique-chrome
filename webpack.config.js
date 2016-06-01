@@ -3,7 +3,7 @@ var webpack = require('webpack')
 
 module.exports = {
   entry: {
-    main: './src/main',
+    devpanel: './src/devpanel',
     content: './src/content',
     devtools: './src/devtools',
   },
@@ -13,8 +13,11 @@ module.exports = {
   },
   module: {
     loaders: [
-      { test: /.js/, loader: 'babel-loader' },
       { test: /.json/, loader: 'json-loader' },
+      { test: /\.jsx?$/, loader: 'babel-loader', query: {
+          presets: ['react', 'es2015']
+        }
+      },
     ]
   },
   node: {

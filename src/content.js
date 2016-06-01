@@ -1,4 +1,4 @@
-import { filterStyles, resetStyles } from 'cssantique'
+var cssantique = require('cssantique')
 
-window.filterStyles = filterStyles
-window.resetStyles = resetStyles
+window.filterStyles = cssantique.filterStyles
+window.resetStyles = cssantique.resetStyles
