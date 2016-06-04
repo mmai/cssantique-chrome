@@ -1,0 +1,88 @@
+body, html, #root {
+  height: 100%;
+  margin: 0;
+}
+
+#content {
+  height: 100%;
+  display: flex; 
+  flex-direction: row;
+  font-family:sans-serif;
+  font-size: 12px;
+}
+
+/* FORM */
+#form {
+  display: flex; 
+  flex-direction: column;
+  border-right: thin solid grey;
+  padding: 1em;
+}
+
+#form-browsers {
+  display: flex; 
+  flex-direction: row;
+}
+
+.form-browsers-item {
+  display: flex;
+  
+  label {
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    padding: 0.2em;
+    margin: 0.3em;
+    background-color: lightgrey;
+    border: medium solid transparent;
+    box-shadow: 2px 2px 1px #656565;
+    &:hover {
+      // background-color: lightblue;
+      // border: medium solid grey;
+      box-shadow: 5px 5px 2px #656565;
+    }
+  }
+}
+
+.form-browsers-logo {
+  width: 30px;
+  height: 30px;
+}
+
+.form-browsers-radio {
+  display: none;
+}
+
+.form-browsers-radio:checked + label {
+  border: medium solid grey;
+  box-shadow: none; 
+  background-color: none;
+}
+
+#form-version {
+}
+
+#form-submit {
+}
+
+/* INFOS */
+#infos {
+  display: flex; 
+  flex-direction: column;
+  padding: 1em;
+}
+
+#discarded {
+  display: flex; 
+  flex-direction: column;
+}
+
+.discarded-item {
+  padding-top: 0.3em;
+}
+
+#errors {
+  display: flex; 
+  flex-direction: column;
+  color: red;
+}

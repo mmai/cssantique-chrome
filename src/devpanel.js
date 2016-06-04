@@ -1,10 +1,11 @@
+var fp = require('lodash/fp')
+
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App'
-import { browsersDb } from 'cssantique'
-
-var fp = require('lodash/fp')
 import { createStore } from 'redux'
+
+import App from './App'
+import { browsers } from 'cssantique'
 
 const defaultState = {
       browser: '',
@@ -17,40 +18,66 @@ const defaultState = {
 
 const cssAntiqueReducer = (state = defaultState, action) => {
   let pending = state.pending
+  let newState = {...state}
   switch (action.type){
   case 'SELECT_BROWSER':
-    const versions = Object.keys(browsersDb[action.browser])
-    return {...state, browser: action.browser, versions, discarded: [], errors: []}
+    const versions = browsers[action.browser].versions
+    const version = versions[versions.length - 1]
+    return {...state, browser: action.browser, versions, version, discarded: [], errors: []}
+  case 'SELECT_VERSION':
+    return {...state, version: action.version, discarded: [], errors: []}
   case 'PROCESS_STYLING':
-    return {...state, version: action.version, pending: [...(state.pending), "STYLING"]}
+    newState = {...state, pending: [...(state.pending), "STYLING"]}
+    return newState
   case 'STYLING_SHOW_ERROR':
     pending = fp.remove((e) => e === 'STYLING', pending)
-    return {...state, pending, errors:[action.error]}
+    newState = {...state, pending:pending, errors:[action.error]}
+    return newState
   case 'STYLING_SHOW_RESULT':
     pending = fp.remove((e) => e === 'STYLING', pending)
-    return {...state, pending, discarded:[action.discarded]}
+    newState = {...state, pending:pending, discarded:action.discarded}
+    return newState
+  case 'RESET':
+    return {...state, pending: [...(state.pending), "RESET"]}
+  case 'RESET_SHOW_ERROR':
+    pending = fp.remove((e) => e === 'RESET', pending)
+    return {...state, pending:pending, errors:[action.error]}
+  case 'RESET_DONE':
+    pending = fp.remove((e) => e === 'RESET', pending)
+    return {...defaultState, pending:pending}
   default:
     return state
   }
 }
-
-const store = createStore(cssAntiqueReducer)
+const store = createStore( cssAntiqueReducer)
 
 const render = () => {
   ReactDOM.render(
     <App
       state={store.getState()}
+      browsers={Object.keys(browsers)}
       onSelectBrowser={() => {
         store.dispatch({
             type:'SELECT_BROWSER',
             browser:document.querySelector('input[name="browserName"]:checked').value
           })
         }}
-      onFormSubmit={(e) => {
-        e.preventDefault()
+      onSelectVersion={() => {
+        const versions = store.getState().versions
+        const versionId = document.getElementById('browserVersion').value
+        store.dispatch({
+            type:'SELECT_VERSION',
+            version: versions[versionId]
+          })
+        }}
+      onProcess={() => {
         store.dispatch({
             type:'PROCESS_STYLING',
-            version: document.getElementById('browserVersion').value
+          })
+        }}
+      onReset={() => {
+        store.dispatch({
+            type:'RESET',
           })
         }}
 
@@ -78,7 +105,6 @@ const applyStyles = () => {
         `,
       {useContentScriptContext: true},
       (result, isException) => {
-        console.log("result received")
         if (isException) {
           store.dispatch({type:'STYLING_SHOW_ERROR', error: isException.value})
         } else {
@@ -90,5 +116,27 @@ const applyStyles = () => {
 
 store.subscribe(applyStyles)
 
+/**
+ * reset
+ * Reset original client document stylesheets and dispatch results to the redux store 
+ *
+ * @return {undefined}
+ */
+const resetStyles = () => {
+  const state = store.getState()
+  if (fp.includes('RESET', state.pending)){
+    chrome.devtools.inspectedWindow.eval(`resetStyles()`,
+      {useContentScriptContext: true},
+      (result, isException) => {
+        if (isException) {
+          store.dispatch({type:'RESET_SHOW_ERROR', error: isException.value})
+        } else {
+          store.dispatch({type:'RESET_DONE'})
+        }
+      })
+  }
+}
+
+store.subscribe(resetStyles)
 render()
 
