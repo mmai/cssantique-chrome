@@ -4,7 +4,7 @@ dev:
 build:
 	# generate optimized files
 	sass src/scss/cssantique.scss:css/cssantique.css
-	webpack -p
+	webpack --config webpack.config.prod.js
 	# Copy files to dist
 	rm -rf dist/*
 	cp manifest.json dist/
