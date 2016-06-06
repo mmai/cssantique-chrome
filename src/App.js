@@ -47,14 +47,11 @@ const App = ({ state, browsers, onProcess, onSelectBrowser, onSelectVersion, onR
        </div>}
     </div>
     <div id="infos">
-      {state.browser === '' &&
-       <div className='helptxt'>
-         Select a browser
-       </div>}
-      {state.browser !== '' && (!state.processed) &&
-       <div className='helptxt'>
-         Slide to the desired version and submit
-       </div>}
+      <div className='helptxt'>
+        {state.browser === '' && 'Select a browser'}
+        {state.browser !== '' && (!state.processed) && 'Slide to the desired version and submit'}
+        {state.pending.indexOf('STYLING') !== -1 && 'Processing...'}
+      </div>
       {state.discarded.length > 0 &&
        <div>
          <h2>Disabled attributes for this <em>{state.browser} {state.version}</em> emulation</h2>

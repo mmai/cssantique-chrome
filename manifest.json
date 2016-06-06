@@ -1,7 +1,7 @@
 {
   "name": "CSSAntique",
   "description": "Emulate older browsers by disabling some CSS rules support",
-  "homepage_url": "http://bourcereau.fr",
+  "homepage_url": "https://github.com/mmai/cssantique-chrome",
   "version": "0.1.0",
   "manifest_version": 2,
   "permissions": [ "<all_urls>", "tabs", "activeTab" ],
