@@ -5,39 +5,61 @@ const App = ({ state, browsers, onProcess, onSelectBrowser, onSelectVersion, onR
     <div id='form'>
       <input type='hidden' id='browserName' />
       <div id="form-browsers">
-        {browsers.map((name, i) => (
-           <div key={name} className='form-browsers-item'>
-             <input
-               onChange={onSelectBrowser}
-               className='form-browsers-radio'
-               type="radio"
-               name="browserName"
-               checked={state.browser === name}
-               value={name}
-               id={'browserRadio-' + name} />
-             <label htmlFor={'browserRadio-' + name}>
-               <img className="form-browsers-logo" src={chrome.extension.getURL(`images/${name}.png`)} />
-               {name}
-             </label>
-           </div>)
-         )}
+        <div className="browsersList">
+          {browsers.map((name, i) => (
+             <div key={name} className='form-browsers-item'>
+               <input
+                 onChange={onSelectBrowser}
+                 className='form-browsers-radio'
+                 type="radio"
+                 name="browserName"
+                 checked={state.browser === name}
+                 value={name}
+                 id={'browserRadio-' + name} />
+               <label htmlFor={'browserRadio-' + name}>
+                 <img className="form-browsers-logo" src={chrome.extension.getURL(`images/${name}.png`)} />
+                 <br/>
+                 {name}
+               </label>
+             </div>)
+           )}
+        </div>
       </div>
-      {state.browser !== '' && <BrowserVersions version={state.version} versions={state.versions} onChange={onSelectVersion} />}
-      {state.version !== '' && <div id="form-submit">
-                                 <div>
-                                   {state.browser}
-                                   {state.version}
-                                 </div>
-                                 <button name="process" onClick={onProcess}>
-                                   Submit
-                                 </button>
-                               </div>}
-      {state.browser !== '' && <button name="reset" onClick={onReset}>
+      {state.browser !== '' &&
+       <div id="form-version">
+         <div>
+           <div>
+             {state.browser} <span className='version'>{state.version}</span>
+           </div>
+           <BrowserVersions version={state.version} versions={state.versions} onChange={onSelectVersion} />
+         </div>
+       </div>}
+      {state.version !== '' &&
+       <div id="form-submit">
+         <div className='validate-buttons'>
+           <button className='btn-submit' name="process" onClick={onProcess}>
+             Submit
+           </button>
+           {state.processed && <button className='btn-reset' name="reset" onClick={onReset}>
                                  Reset
                                </button>}
+         </div>
+       </div>}
     </div>
     <div id="infos">
-      <Discarded discarded={state.discarded} />
+      {state.browser === '' &&
+       <div className='helptxt'>
+         Select a browser
+       </div>}
+      {state.browser !== '' && (!state.processed) &&
+       <div className='helptxt'>
+         Slide to the desired version and submit
+       </div>}
+      {state.discarded.length > 0 &&
+       <div>
+         <h2>Disabled attributes for this <em>{state.browser} {state.version}</em> emulation</h2>
+         <Discarded discarded={state.discarded} />
+       </div>}
       <TxtError errors={state.errors} />
     </div>
   </div>
@@ -47,25 +69,18 @@ const BrowserVersions = ({version, versions, onChange}) => {
   const max = versions.length - 1
   const curentIndex = versions.indexOf(version)
   return (
-  <div id="form-version">
-    <div>
-      Version:
-      {version}
-    </div>
-    <input
-      name='browserVersion'
-      id="browserVersion"
-      type="range"
-      min="0"
-      max={max}
-      value={curentIndex}
-      onChange={onChange} />
-  </div>
+  <input
+    name='browserVersion'
+    id="browserVersion"
+    type="range"
+    min="0"
+    max={max}
+    value={curentIndex}
+    onChange={onChange} />
   )}
 
 const Discarded = ({discarded}) => (
   <div id="discarded">
-    <h2>{discarded.length > 0 ? 'Attributes not supported on the selected browser' : ''}</h2>
     {discarded.map((d, i) => (
        <span key={i} className="discarded-item">{d}</span>
      ))}

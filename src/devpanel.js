@@ -10,6 +10,7 @@ import { browsers } from 'cssantique'
 const defaultState = {
       browser: '',
       version: '',
+      processed: false,
       versions: [],
       discarded: [],
       pending: [],
@@ -27,7 +28,7 @@ const cssAntiqueReducer = (state = defaultState, action) => {
   case 'SELECT_VERSION':
     return {...state, version: action.version, discarded: [], errors: []}
   case 'PROCESS_STYLING':
-    newState = {...state, pending: [...(state.pending), "STYLING"]}
+    newState = {...state, processed: true, pending: [...(state.pending), "STYLING"]}
     return newState
   case 'STYLING_SHOW_ERROR':
     pending = fp.remove((e) => e === 'STYLING', pending)
@@ -35,10 +36,10 @@ const cssAntiqueReducer = (state = defaultState, action) => {
     return newState
   case 'STYLING_SHOW_RESULT':
     pending = fp.remove((e) => e === 'STYLING', pending)
-    newState = {...state, pending:pending, discarded:action.discarded}
+    newState = {...state, pending:pending, discarded:action.discarded.sort()}
     return newState
   case 'RESET':
-    return {...state, pending: [...(state.pending), "RESET"]}
+    return {...state, processed: false, pending: [...(state.pending), "RESET"]}
   case 'RESET_SHOW_ERROR':
     pending = fp.remove((e) => e === 'RESET', pending)
     return {...state, pending:pending, errors:[action.error]}
