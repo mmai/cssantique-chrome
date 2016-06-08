@@ -1,9 +1,9 @@
 dev:
-	cd src/scss && sass --watch cssantique.scss:../../css/cssantique.css &
+	cd src/scss && sass --watch .:../../css/ &
 	webpack -d -w
 build:
 	# generate optimized files
-	sass src/scss/cssantique.scss:css/cssantique.css
+	sass src/scss/:css/
 	webpack --config webpack.config.prod.js
 	# Copy files to dist
 	rm -rf dist/*

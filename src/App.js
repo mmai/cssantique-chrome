@@ -24,6 +24,10 @@ const App = ({ state, browsers, onProcess, onSelectBrowser, onSelectVersion, onR
              </div>)
            )}
         </div>
+        {state.browser === '' &&
+         <div className="helptxt">
+           Select a browser
+         </div>}
       </div>
       {state.browser !== '' &&
        <div id="form-version">
@@ -37,24 +41,24 @@ const App = ({ state, browsers, onProcess, onSelectBrowser, onSelectVersion, onR
       {state.version !== '' &&
        <div id="form-submit">
          <div className='validate-buttons'>
+           {state.browser !== '' && (!state.processed) && 'Slide to the desired version and...'}
            <button className='btn-submit' name="process" onClick={onProcess}>
-             Submit
+             Emulate
            </button>
-           {state.processed && <button className='btn-reset' name="reset" onClick={onReset}>
-                                 Reset
-                               </button>}
+           {state.processed &&
+            <button className='btn-reset' name="reset" onClick={onReset}>
+              Reset
+            </button>}
          </div>
        </div>}
     </div>
     <div id="infos">
-      <div className='helptxt'>
-        {state.browser === '' && 'Select a browser'}
-        {state.browser !== '' && (!state.processed) && 'Slide to the desired version and submit'}
+      <div className='infostxt'>
         {state.pending.indexOf('STYLING') !== -1 && 'Processing...'}
       </div>
       {state.discarded.length > 0 &&
        <div>
-         <h2>Disabled attributes for this <em>{state.browser} {state.version}</em> emulation</h2>
+         <h2>Disabled CSS attributes</h2>
          <Discarded discarded={state.discarded} />
        </div>}
       <TxtError errors={state.errors} />

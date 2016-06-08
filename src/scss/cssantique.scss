@@ -15,7 +15,6 @@ body, html, #root {
 #form {
   display: flex; 
   flex-direction: column;
-  border-right: thin solid grey;
   padding: 1em;
 }
 
@@ -82,12 +81,21 @@ $bitem-width: 50px;
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
+  font-size: 1.2em;
   button {
+    font-size: 1.1em;
     margin: 0.5em;
-    font-size: 1.2em;
     width: 6em;
     height: 2em;
   }
+}
+
+.helptxt {
+  text-align:center;
+  // width: 100%;
+  margin: 1em;
+  font-size: 1.5em
 }
 
 /* INFOS */
@@ -96,6 +104,7 @@ $bitem-width: 50px;
   flex-direction: column;
   padding: 1em;
   overflow: auto;
+  border-left: thin solid grey;
 }
 
 #discarded {
@@ -114,6 +123,6 @@ $bitem-width: 50px;
   color: red;
 }
 
-.helptxt {
+.infostxt {
   font-size: 2em;
 }

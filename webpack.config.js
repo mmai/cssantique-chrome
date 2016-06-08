@@ -6,6 +6,7 @@ module.exports = {
     devpanel: './src/devpanel',
     content: './src/content',
     devtools: './src/devtools',
+    background: './src/background',
   },
   output: {
     path: path.resolve(__dirname, 'js/'),

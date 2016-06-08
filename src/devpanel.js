@@ -7,6 +7,14 @@ import { createStore } from 'redux'
 import App from './App'
 import { browsers } from 'cssantique'
 
+// Create a connection to the background page
+// (cf. https://developer.chrome.com/extensions/devtools#content-script-to-devtools)
+var backgroundPageConnection = chrome.runtime.connect({ name: "devpanel" })
+backgroundPageConnection.postMessage({
+    name: 'init',
+    tabId: chrome.devtools.inspectedWindow.tabId
+})
+
 const defaultState = {
       browser: '',
       version: '',
@@ -100,18 +108,23 @@ const applyStyles = () => {
     // console.log('applying new styles', state.pending)
     chrome.devtools.inspectedWindow.eval(`
       resetStyles()
+      showPopup('Disabling CSS properties not supported by ${state.browser} ${state.version}...')
       filterStyles({
         browser: {name: "${state.browser}", version: "${state.version}"}
+      }, function(res){
+        closePopup()
+        chrome.runtime.sendMessage({filterStyles: res})
       })
         `,
       {useContentScriptContext: true},
       (result, isException) => {
         if (isException) {
           store.dispatch({type:'STYLING_SHOW_ERROR', error: isException.value})
-        } else {
-          store.dispatch({type:'STYLING_SHOW_RESULT', discarded: result.discarded})
         }
+        // Done on the backgroundPageConnection listener :
+        // store.dispatch({type:'STYLING_SHOW_RESULT', discarded: result.discarded})
       })
+
   }
 }
 
@@ -126,18 +139,32 @@ store.subscribe(applyStyles)
 const resetStyles = () => {
   const state = store.getState()
   if (fp.includes('RESET', state.pending)){
-    chrome.devtools.inspectedWindow.eval(`resetStyles()`,
+    chrome.devtools.inspectedWindow.eval(`
+      resetStyles()
+      chrome.runtime.sendMessage({resetStyles: true})
+      `,
       {useContentScriptContext: true},
       (result, isException) => {
         if (isException) {
           store.dispatch({type:'RESET_SHOW_ERROR', error: isException.value})
-        } else {
-          store.dispatch({type:'RESET_DONE'})
-        }
+        } 
+        // Done on the backgroundPageConnection listener: 
+        // store.dispatch({type:'RESET_DONE'}) 
       })
   }
 }
 
 store.subscribe(resetStyles)
+
+// Process messages from content script
+backgroundPageConnection.onMessage.addListener((msg) => {
+    if ("filterStyles" in msg){
+      store.dispatch({type:'STYLING_SHOW_RESULT', discarded: msg.filterStyles.discarded})
+    } else if ("resetStyles" in msg){
+      console.log('reset done')
+      store.dispatch({type:'RESET_DONE'})
+    }
+  })
+
 render()
 

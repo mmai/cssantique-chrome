@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "CSSAntique",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "default_locale": "en",
   "description": "Emulate older browsers by disabling some CSS rules support",
   "author": "Henri Bourcereau",
@@ -13,10 +13,14 @@
     "128": "icons/icon128.png"
   },
   "web_accessible_resources": [ "images/*.png"],
+  "background": {
+    "scripts": ["js/background.js"]
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["js/content.js"]
+      "js": ["js/content.js"],
+      "css": ["css/cssantique-content.css"]
     }
   ],
   "devtools_page": "devtools.html"
