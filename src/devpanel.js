@@ -66,15 +66,17 @@ const render = () => {
     <App
       state={store.getState()}
       browsers={Object.keys(browsers)}
-      onSelectBrowser={() => {
-        store.dispatch({
+      onSelectBrowser={(event) => {
+        if (event.target.checked){
+          store.dispatch({
             type:'SELECT_BROWSER',
-            browser:document.querySelector('input[name="browserName"]:checked').value
+            browser: event.target.value
           })
+          }
         }}
-      onSelectVersion={() => {
+      onSelectVersion={(event) => {
         const versions = store.getState().versions
-        const versionId = document.getElementById('browserVersion').value
+        const versionId = event.target.value
         store.dispatch({
             type:'SELECT_VERSION',
             version: versions[versionId]
