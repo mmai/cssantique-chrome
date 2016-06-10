@@ -3,9 +3,16 @@ var cssantique = require('cssantique')
 window.filterStyles = cssantique.filterStyles
 window.resetStyles = cssantique.resetStyles
 
+let popupInserted = false
 let popupDiv = document.createElement('div')
 popupDiv.setAttribute('class', 'cssantique-modal cssantique-modal--closed')
-document.body.appendChild(popupDiv)
+
+function insertPopupDiv () {
+  if (!popupInserted && document.body) {
+    document.body.appendChild(popupDiv)
+    popupInserted = true
+  }
+}
 
 window.showPopup = function (message) {
   popupDiv.innerHTML = `
@@ -14,6 +21,7 @@ window.showPopup = function (message) {
       <div>${message}</div>
     </div>`
   popupDiv.setAttribute('class', 'cssantique-modal cssantique-modal--opened')
+  insertPopupDiv()
 }
 
 window.closePopup = function () {

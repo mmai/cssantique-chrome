@@ -12,7 +12,8 @@ chrome.runtime.onConnect.addListener((port) => {
     // DevTools page, so we need to send it explicitly.
     if (message.name === 'init') {
       connections[message.tabId] = port
-      return
+      // Inject content script to the identified tab
+      chrome.tabs.executeScript(message.tabId, {file: message.scriptToInject})
     }
   })
 

@@ -12,7 +12,8 @@ import { browsers } from 'cssantique'
 var backgroundPageConnection = chrome.runtime.connect({ name: "devpanel" })
 backgroundPageConnection.postMessage({
     name: 'init',
-    tabId: chrome.devtools.inspectedWindow.tabId
+    tabId: chrome.devtools.inspectedWindow.tabId,
+    scriptToInject: "js/content.js"
 })
 
 const defaultState = {
